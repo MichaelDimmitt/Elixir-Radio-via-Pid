@@ -70,9 +70,58 @@ defmodule Narrator do
     # RadioStation.stream(:fm600, 0);
     # RadioStation.stream(:fm969TheEagle, 999999)
   end
+  def simple_car_radio do
+    CarRadio.start_station([nil, :fm969TheEagle, "Nick"])
+    |> CarRadio.change_station(:fm600)
+    |> CarRadio.stop_station
+    |> CarRadio.start_station
+    |> CarRadio.stop_station
+  end
+  def complicatedRadio do
+    {fm600, station2} = {:fm600, :fm969TheEagle}
+    {car1, car2, car3} = {
+      CarRadio.start_station([nil, station2, "Nick"]),
+      CarRadio.start_station([nil, fm600, "Tim"]),
+      CarRadio.start_station([nil, fm600, "John"])
+    }
+
+    spawn fn -> CarRadio.stop_station(car1) end
+    spawn fn -> CarRadio.stop_station(car2) end
+
+    CarRadio.change_station(car3, station2)
+    |> CarRadio.stop_station
+    |> CarRadio.start_station
+    |> CarRadio.change_station(station2)
+    |> CarRadio.stop_station
+
+    # continue_publishing
+  end
+
+  def complicatedRadioOld do
+    {fm600, station2} = {:fm600, :fm969TheEagle}
+
+    {car1, car2, car3} = {
+      CarRadio.start_station([nil, station2, "Nick"]),
+      CarRadio.start_station([nil, fm600, "Tim"]),
+      CarRadio.start_station([nil, fm600, "John"])
+    }
+    _car1 = CarRadio.stop_station(car1);
+    _car2 = CarRadio.stop_station(car2)
+
+    car3 = CarRadio.change_station(car3, station2)
+    _car3 = CarRadio.stop_station(car3)
+    car3 = CarRadio.start_station([nil,fm600, "John"])
+    car3 = CarRadio.change_station(car3, station2)
+    _car3 = CarRadio.stop_station(car3)
+  end
+
+
 end
 '''
 Narrator.power_on_radio_towers
+Narrator.simple_car_radio
+Narrator.complicatedRadio
+Narrator.complicatedRadioOld
 CarRadio.start_station([nil, :fm969TheEagle, "Nick"]) |> CarRadio.change_station(:fm600)
 
 Narrator.power_on_radio_towers
