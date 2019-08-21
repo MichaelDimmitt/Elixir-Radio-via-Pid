@@ -36,6 +36,15 @@ defmodule CarRadio do
     Process.sleep(100);
     [pid, station, name]
   end
+
+  # def instruction_manual do
+  #   ensure radio station :fm969TheEagle has been created
+  #   CarRadio.start_station([nil, :fm969TheEagle, "Nick"])
+  #   |> CarRadio.change_station(:fm600)
+  #   |> CarRadio.stop_station
+  #   |> CarRadio.start_station
+  #   |> CarRadio.stop_station
+  # end
 end
 
 defmodule RadioStation do
@@ -93,8 +102,6 @@ defmodule Narrator do
     |> CarRadio.start_station
     |> CarRadio.change_station(station2)
     |> CarRadio.stop_station
-
-    # continue_publishing
   end
 
   def complicatedRadioOld do
