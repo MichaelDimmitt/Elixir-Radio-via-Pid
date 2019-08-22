@@ -5,13 +5,6 @@ defmodule CarRadio do
       message -> IO.puts "#{name} received #{message}"; loop(name);
     end
   end
-  def default_turn_on_dumb_radio do
-    [station | _tail] = Narrator.ask_stations()
-    IO.inspect('Starting Radio station')
-    pid = CarRadio.start('')
-    PubSub.subscribe(pid, station);
-    [pid, station, '']
-  end
   def start_station([_pid, station, name]) do
     IO.inspect('Starting Radio station')
     pid = CarRadio.start(name)
@@ -36,7 +29,13 @@ defmodule CarRadio do
     Process.sleep(100);
     [pid, station, name]
   end
-
+  def default_turn_on_dumb_radio do
+    [station | _tail] = Narrator.ask_stations()
+    IO.inspect('Starting Radio station')
+    pid = CarRadio.start('')
+    PubSub.subscribe(pid, station);
+    [pid, station, '']
+  end
   # def instruction_manual do
   #   ensure radio station :fm969TheEagle has been created
   #   CarRadio.start_station([nil, :fm969TheEagle, "Nick"])
