@@ -1,4 +1,4 @@
-defmodule CarRadio do
+defmodule CarRadio2 do
   def start(client_name) do spawn(fn -> loop(client_name) end) end
   def loop(name) do
     receive do
@@ -46,7 +46,7 @@ defmodule CarRadio do
   # end
 end
 
-defmodule RadioStation do
+defmodule RadioStation2 do
   def stream(station, count) do
     spawn fn -> infinateStation(station, count) end
   end
@@ -65,7 +65,7 @@ defmodule RadioStation do
   end
 end
 
-defmodule Narrator do
+defmodule Narrator2 do
   # alias ElixirPubSubDepExample.CarRadio
   def ask_stations do
     [:fm600, :fm969TheEagle]
@@ -133,4 +133,3 @@ CarRadio.start_station([nil, :fm969TheEagle, "Nick"]) |> CarRadio.change_station
 Narrator.power_on_radio_towers
 CarRadio.default_turn_on_dumb_radio
 '''
-
