@@ -1,17 +1,46 @@
 defmodule CarRadio do
-
-  def start_station([_pid, station, name]) do
-    IO.inspect('Starting Radio station')
-    pid = CarRadio.start(name)
-    PubSub.subscribe(pid, station);
-    # Process.sleep(100);
-    [pid, station, name]
-  end
   def start(client_name) do spawn(fn -> loop(client_name) end) end
   def loop(name) do
     receive do # recieve is blocking.
       message -> IO.puts "#{name} received #{message}"; loop(name);
     end
+  end
+
+  @spec start_station([...]) :: [...]
+  def start_station([_pid, station, name]) do
+    IO.inspect("Starting Radio station")
+    pid = CarRadio.start(name)
+    PubSub.subscribe(pid, station);
+    # Process.sleep(100);
+    [pid, station, name]
+  end
+
+  def stop_station([pid, prev_station, name]) do
+    Process.sleep(100);
+    PubSub.unsubscribe(pid, prev_station);
+    Process.sleep(100);
+    IO.inspect("Stopping Radio station")
+    Process.sleep(10);
+    [pid, prev_station, name]
+  end
+
+  def rejoin_station([pid, station, name]) do
+    IO.inspect("Rejoining back")
+    PubSub.subscribe(pid, station);
+    Process.sleep(100);
+    change_station([pid, station, name], :fm600)
+    Process.sleep(100);
+    CarRadio.stop_station([pid, :fm600, name])
+  end
+
+  def change_station([pid, prev_station, name], station) do
+    Process.sleep(100);
+    PubSub.unsubscribe(pid, prev_station);
+    IO.inspect("Changing Radio station")
+    Process.sleep(1000);
+    PubSub.subscribe(pid, station);
+    Process.sleep(100);
+    [pid, station, name]
   end
 end
 
@@ -39,10 +68,11 @@ end
 defmodule Narrator do
   def start() do
     RadioTower.power_on_radio_towers
-    CarRadio.start_station([nil, :fm969TheEagle, "Nick"])
+    [pid, _, _] = CarRadio.start_station([nil, :fm969TheEagle, "Nick"])
+    IO.inspect(pid)
+    Process.sleep(100);
+    CarRadio.stop_station([pid, :fm969TheEagle, "Nick"])
   end
 end
-'''
-Narrator.start
 
-'''
+# Narrator.start
